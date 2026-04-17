@@ -1,0 +1,105 @@
+Могу предложить вам задачку на подумать: есть 3 файла, main.c, sort.c, sort.h
+
+sort.h:
+#include <stdio.h>
+
+extern void
+radix_sort(int *arr); 
+
+void
+count_sort(int *arr, int digit);
+sort.c:
+void
+radix_sort(int *arr) {
+    for (int i = 0; i < 32; ++i) {
+        count_sort(arr, i);
+    }
+    printf("radix _sort on array %p", arr);
+}
+
+void
+count_sort(int *arr, int d) {
+    printf("count _sort on array %p, digit %d", arr, d);
+}
+
+main.c:
+#include <stdio.h>
+
+enum { MAX_N = 1000 }
+
+int
+main(void) {
+    int n;
+    scanf("%d", &n);
+    if (n > MAX_N) {
+        return 1;
+    }
+    int arr[MAX_N];
+    for (int i = 0; i < n; ++i) {
+         scanf("%d", arr + i);
+    }
+    radix_sort(arr);
+    for (int i = 0; i < n; ++i) {
+         printf("%d ", arr[i]);
+    }
+    printf("\n");
+    return 0;
+}
+sort и main хотят собирать по отдельности: 
+gcc -c -O0 main.c -o main.o
+gcc -c -O0 sort.c -o sort.o
+gcc sort.o main.o -o main.out
+
+Но, к сожалению, в программе допушено значительное количество ошибок. Предложите свои исправления(желательно пользуясь компилятором только для проверки гипотез, что именно не работает, но подумать сначала самим)
+
+
+ПРАВИЛЬНО
+sort.h:
+
+extern void
+radix_sort(int *arr); 
+
+extern void
+count_sort(int *arr, int digit);
+
+
+sort.c:
+#include <stdio.h>
+#inclide "sort.h"
+void
+radix_sort(int *arr) {
+    for (int i = 0; i < 32; ++i) {
+        count_sort(arr, i);
+    }
+    printf("radix _sort on array %p", arr);
+}
+
+void
+count_sort(int *arr, int d) {
+    printf("count _sort on array %p, digit %d", arr, d);
+}
+
+
+main.c:
+#include <stdio.h>
+#include "sort.h"
+enum { MAX_N = 1000 };
+
+int
+main(void) {
+    int n;
+    scanf("%d", &n);
+    if (n > MAX_N) {
+        return 1;
+    }
+    int arr[MAX_N];
+    for (int i = 0; i < n; ++i) {
+         scanf("%d", arr + i);
+    }
+    radix_sort(arr);
+    for (int i = 0; i < n; ++i) {
+         printf("%d ", arr[i]);
+    }
+    printf("\n");
+    return 0;
+}

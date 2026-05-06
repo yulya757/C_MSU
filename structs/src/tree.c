@@ -1,5 +1,6 @@
 #include "tree.h"
 #include <errno.h>
+#include <stdio.h>
 
 Heap heap_init() {
     return NULL;

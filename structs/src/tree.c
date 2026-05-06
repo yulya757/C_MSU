@@ -160,19 +160,19 @@ TreeNode *bst_find(const BSTree *bst, T value) {
     return -1;
 }
 void bst_print(const BSTree *bst) {
-    if (heap == NULL) {
+    if (bst == NULL) {
         return;
     }
-    print(heap->value);
-    heap_print(heap->left);
-    heap_print(heap->right);
+    print(bst->value);
+    heap_print(bst->left);
+    heap_print(bst->right);
     return;
 }
 
 void bst_destroy(BSTree bst) {
     while (bst != NULL) {
         bst_destoy(bst->left);
-        BSTree next = heap->right;
+        BSTree next = bst->right;
         free(bst);
         bst=next;
     }

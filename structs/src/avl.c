@@ -2,6 +2,73 @@
 #include <errno.h>
 #include "avl.h"
 
+
+static unsigned char height(AVLNode *n) {
+    return n ? n->h : 0;
+}
+
+static void fix_height(AVLNode *n) {
+    unsigned char hl = height(n->left);
+    unsigned char hr = height(n->right);
+    n->h = (hl > hr ? hl : hr) + 1;
+}
+
+static AVLNode *
+small_left_rotate(AVLNode *x) {
+    AVLNode *y = x->right;
+
+    x->right = y->left;
+    if (y->left)
+        y->left->parent = x;
+
+    y->left = x;
+
+    y->parent = x->parent;
+    x->parent = y;
+
+    fix_height(x);
+    fix_height(y);
+
+    return y;
+}
+
+static AVLNode *
+small_right_rotate(AVLNode *y) {
+    AVLNode *x = y->left;
+
+    y->left = x->right;
+    if (x->right)
+        x->right->parent = y;
+
+    x->right = y;
+
+    x->parent = y->parent;
+    y->parent = x;
+
+    fix_height(y);
+    fix_height(x);
+
+    return x;
+}
+
+static AVLNode *
+big_left_rotate(AVLNode *x) {
+    x->right = small_right_rotate(x->right);
+    if (x->right)
+        x->right->parent = x;
+
+    return small_left_rotate(x);
+}
+
+static AVLNode *
+big_right_rotate(AVLNode *y) {
+    y->left = small_left_rotate(y->left);
+    if (y->left)
+        y->left->parent = y;
+
+    return small_right_rotate(y);
+}
+
 AVLTree avl_init() {
     return NULL;
 }
@@ -234,70 +301,4 @@ void avl_destroy(AVLTree avl) {
         free(avl);
         avl=next;
     }    
-}
-
-static unsigned char height(AVLNode *n) {
-    return n ? n->h : 0;
-}
-
-static void fix_height(AVLNode *n) {
-    unsigned char hl = height(n->left);
-    unsigned char hr = height(n->right);
-    n->h = (hl > hr ? hl : hr) + 1;
-}
-
-static AVLNode *
-small_left_rotate(AVLNode *x) {
-    AVLNode *y = x->right;
-
-    x->right = y->left;
-    if (y->left)
-        y->left->parent = x;
-
-    y->left = x;
-
-    y->parent = x->parent;
-    x->parent = y;
-
-    fix_height(x);
-    fix_height(y);
-
-    return y;
-}
-
-static AVLNode *
-small_right_rotate(AVLNode *y) {
-    AVLNode *x = y->left;
-
-    y->left = x->right;
-    if (x->right)
-        x->right->parent = y;
-
-    x->right = y;
-
-    x->parent = y->parent;
-    y->parent = x;
-
-    fix_height(y);
-    fix_height(x);
-
-    return x;
-}
-
-static AVLNode *
-big_left_rotate(AVLNode *x) {
-    x->right = small_right_rotate(x->right);
-    if (x->right)
-        x->right->parent = x;
-
-    return small_left_rotate(x);
-}
-
-static AVLNode *
-big_right_rotate(AVLNode *y) {
-    y->left = small_left_rotate(y->left);
-    if (y->left)
-        y->left->parent = y;
-
-    return small_right_rotate(y);
 }
